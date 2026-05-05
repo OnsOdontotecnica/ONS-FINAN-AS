@@ -6,13 +6,13 @@
     <title>ONS Financeiro - Windows 95/97</title>
     
     <!-- PWA Meta -->
-   <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="launchericon-192x192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ONS Financeiro">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#008080">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="launchericon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ONS Financeiro">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#008080">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -37,7 +37,6 @@
             margin: 0 auto;
         }
         
-        /* Janela Windows 95 */
         .window {
             background-color: #c0c0c0;
             border-style: solid;
@@ -47,7 +46,6 @@
             box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
         }
         
-        /* Barra de título */
         .title-bar {
             background-color: #000080;
             color: white;
@@ -82,7 +80,6 @@
             padding: 16px;
         }
         
-        /* Botões Windows 95 */
         .win95-btn {
             background-color: #c0c0c0;
             border-style: solid;
@@ -328,13 +325,11 @@
 </head>
 <body>
     <div class="desktop">
-        <!-- Saldo principal -->
         <div class="main-balance">
             <div class="label">SALDO TOTAL</div>
             <div class="value" id="saldoTotal">R$ 0,00</div>
         </div>
         
-        <!-- Abas -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
             <button class="tab-btn" data-tab="add">➕ Adicionar</button>
@@ -343,7 +338,6 @@
             <button class="tab-btn" data-tab="backup">💾 Backup</button>
         </div>
         
-        <!-- DASHBOARD -->
         <div id="dashboard" class="tab-pane active">
             <div class="categories-grid">
                 <div class="category-card">
@@ -392,7 +386,6 @@
             </div>
         </div>
         
-        <!-- ADICIONAR -->
         <div id="add" class="tab-pane">
             <div class="window">
                 <div class="title-bar">
@@ -449,7 +442,6 @@
             </div>
         </div>
         
-        <!-- EXTRATO -->
         <div id="extrato" class="tab-pane">
             <div class="window">
                 <div class="title-bar">
@@ -469,7 +461,6 @@
             </div>
         </div>
         
-        <!-- RELATÓRIO -->
         <div id="relatorio" class="tab-pane">
             <div class="period-selector">
                 <div class="field-group">
@@ -493,7 +484,6 @@
             </div>
         </div>
         
-        <!-- BACKUP -->
         <div id="backup" class="tab-pane">
             <div class="window">
                 <div class="title-bar">
@@ -520,7 +510,6 @@
         </div>
     </div>
     
-    <!-- Modal -->
     <div id="modalGasto" class="modal">
         <div class="window modal-window">
             <div class="title-bar">
@@ -879,7 +868,7 @@
                     </div>
                     <div class="summary">
                         <table>
-                            </table><td><strong>💰 Total de Receitas:</strong></td><td style="text-align:right; color:#000080;">${formatMoney(totalReceitas)}</td></tr>
+                            <tr><td><strong>💰 Total de Receitas:</strong></td><td style="text-align:right; color:#000080;">${formatMoney(totalReceitas)}</td></tr>
                             <tr><td><strong>💸 Total de Despesas:</strong></td><td style="text-align:right; color:#800000;">${formatMoney(totalDespesas)}</td></tr>
                             <tr><td><strong>📌 Saldo do Período:</strong></td><td style="text-align:right; font-weight:bold;">${formatMoney(saldo)}</td></tr>
                         </table>
@@ -988,26 +977,14 @@
             });
         });
         
-   const CACHE_NAME = 'ons-financeiro-v2';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
-  );
-});
+        // REGISTRAR SERVICE WORKER (CORRETO)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado!', reg))
+                    .catch(err => console.log('Erro no Service Worker:', err));
+            });
+        }
         
         // INICIALIZAÇÃO
         carregarDados();
