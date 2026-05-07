@@ -1038,14 +1038,25 @@
         });
         
         // REGISTRAR SERVICE WORKER (CORRETO)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registrado!', reg))
-                    .catch(err => console.log('Erro no Service Worker:', err));
-            });
-        }
-        
+      {
+  "name": "ONS Financeiro 95",
+  "short_name": "ONS95",
+  "description": "Controle financeiro pessoal com estilo Windows 95",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#008080",
+  "theme_color": "#000080",
+  "icons": [
+    {
+      "src": "launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
         // INICIALIZAÇÃO
         carregarDados();
         atualizarCategorias();
