@@ -900,75 +900,61 @@
             `;
         }
         
-       function imprimirRelatorioPeriodo() {
-    let dataInicio = document.getElementById('dataInicio').value;
-    let dataFim = document.getElementById('dataFim').value;
-    if (!dataInicio || !dataFim) { 
-        alert('Selecione as datas inicial e final!'); 
-        return; 
-    }
-    
-    const html = gerarHTMLRelatorio(dataInicio, dataFim);
-    
-    // Detecta se é mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-        // SOLUÇÃO PARA CELULAR: Criar um link para download e abrir em nova aba
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        
-        // Tenta abrir em nova aba
-        const novaAba = window.open(url, '_blank');
-        
-        if (!novaAba || novaAba.closed || typeof novaAba.closed == 'undefined') {
-            // Se pop-up foi bloqueado, mostra instrução
-            alert('⚠️ Para imprimir no celular:\n\n1. Clique em OK\n2. Toque e segure no link que aparecer\n3. Escolha "Abrir em nova aba"\n4. Na aba que abrir, use o menu do navegador → Imprimir');
+        function imprimirRelatorioPeriodo() {
+            let dataInicio = document.getElementById('dataInicio').value;
+            let dataFim = document.getElementById('dataFim').value;
+            if (!dataInicio || !dataFim) { 
+                alert('Selecione as datas inicial e final!'); 
+                return; 
+            }
             
-            // Cria um link visível para o usuário clicar
-            const linkDiv = document.createElement('div');
-            linkDiv.style.position = 'fixed';
-            linkDiv.style.bottom = '20px';
-            linkDiv.style.left = '20px';
-            linkDiv.style.right = '20px';
-            linkDiv.style.backgroundColor = '#c0c0c0';
-            linkDiv.style.border = '3px solid #000080';
-            linkDiv.style.padding = '15px';
-            linkDiv.style.zIndex = '9999';
-            linkDiv.style.textAlign = 'center';
-            linkDiv.innerHTML = `
-                <strong>📄 Clique aqui para abrir o relatório:</strong><br>
-                <a href="${url}" target="_blank" style="color:#000080; font-weight:bold;">Abrir Relatório para Impressão</a>
-                <br><br>
-                <button onclick="this.parentElement.remove()" style="background:#800000; color:white; border:none; padding:5px 10px;">Fechar</button>
-            `;
-            document.body.appendChild(linkDiv);
+            const html = gerarHTMLRelatorio(dataInicio, dataFim);
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // Remove o link após 30 segundos
-            setTimeout(() => {
-                if (linkDiv.parentElement) linkDiv.remove();
-                URL.revokeObjectURL(url);
-            }, 30000);
-        } else {
-            // Conseguiu abrir, tenta imprimir automaticamente
-            setTimeout(() => {
-                novaAba.print();
-            }, 1000);
+            if (isMobile) {
+                const blob = new Blob([html], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const novaAba = window.open(url, '_blank');
+                
+                if (!novaAba || novaAba.closed || typeof novaAba.closed == 'undefined') {
+                    alert('⚠️ Para imprimir no celular:\n\n1. Clique em OK\n2. Toque e segure no link que aparecer\n3. Escolha "Abrir em nova aba"\n4. Na aba que abrir, use o menu do navegador → Imprimir');
+                    
+                    const linkDiv = document.createElement('div');
+                    linkDiv.style.position = 'fixed';
+                    linkDiv.style.bottom = '20px';
+                    linkDiv.style.left = '20px';
+                    linkDiv.style.right = '20px';
+                    linkDiv.style.backgroundColor = '#c0c0c0';
+                    linkDiv.style.border = '3px solid #000080';
+                    linkDiv.style.padding = '15px';
+                    linkDiv.style.zIndex = '9999';
+                    linkDiv.style.textAlign = 'center';
+                    linkDiv.innerHTML = `
+                        <strong>📄 Clique aqui para abrir o relatório:</strong><br>
+                        <a href="${url}" target="_blank" style="color:#000080; font-weight:bold;">Abrir Relatório para Impressão</a>
+                        <br><br>
+                        <button onclick="this.parentElement.remove()" style="background:#800000; color:white; border:none; padding:5px 10px;">Fechar</button>
+                    `;
+                    document.body.appendChild(linkDiv);
+                    
+                    setTimeout(() => {
+                        if (linkDiv.parentElement) linkDiv.remove();
+                        URL.revokeObjectURL(url);
+                    }, 30000);
+                } else {
+                    setTimeout(() => { novaAba.print(); }, 1000);
+                }
+            } else {
+                const janela = window.open('', '_blank');
+                if (janela) {
+                    janela.document.write(html);
+                    janela.document.close();
+                    janela.onload = function() { janela.print(); };
+                } else {
+                    alert('Habilitar pop-ups para este site');
+                }
+            }
         }
-    } else {
-        // SOLUÇÃO PARA PC (funciona normal)
-        const janela = window.open('', '_blank');
-        if (janela) {
-            janela.document.write(html);
-            janela.document.close();
-            janela.onload = function() {
-                janela.print();
-            };
-        } else {
-            alert('Habilitar pop-ups para este site');
-        }
-    }
-}
         
         function exportarJSON() {
             const dados = { despesas, receitas };
@@ -1037,26 +1023,15 @@
             });
         });
         
-        // REGISTRAR SERVICE WORKER (CORRETO)
-      {
-  "name": "ONS Financeiro 95",
-  "short_name": "ONS95",
-  "description": "Controle financeiro pessoal com estilo Windows 95",
-  "start_url": ".",
-  "scope": ".",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#008080",
-  "theme_color": "#000080",
-  "icons": [
-    {
-      "src": "launchericon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
-}
+        // SERVICE WORKER - CORRIGIDO (COM VERIFICAÇÃO DE ERRO)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('✅ Service Worker registrado!', reg))
+                    .catch(err => console.log('⚠️ Service Worker não registrado:', err));
+            });
+        }
+        
         // INICIALIZAÇÃO
         carregarDados();
         atualizarCategorias();
