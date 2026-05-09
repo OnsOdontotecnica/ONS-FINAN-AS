@@ -10,6 +10,7 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(async cache => {
       try {
         await cache.addAll(urlsToCache);
+        console.log('Arquivos cacheados com sucesso!');
       } catch (error) {
         console.log('Erro ao adicionar arquivos ao cache:', error);
       }
@@ -35,7 +36,7 @@ self.addEventListener('fetch', event => {
         return response;
       });
     }).catch(() => {
-      return new Response('Você está offline e esta página não está disponível no cache.', {
+      return new Response('Você está offline. Conecte-se à internet para acessar esta página.', {
         status: 404,
         statusText: 'Offline'
       });
